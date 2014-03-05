@@ -19,7 +19,7 @@ link_directories("~/libcvd")
 #link_directories("/usr/lib")
 #link_directories("/usr/local/lib")
 
-set(gstereo_LIBRARIES )
+set(gstereo_LIBRARIES cvd)
 
 #SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_CGAL_COMPILE_FLAGS}" )
 
