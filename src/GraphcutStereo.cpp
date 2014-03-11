@@ -11,7 +11,7 @@ GraphcutStereo::GraphcutStereo(int argc, char **argv)
     fname.clear();
     fname.append(argv[1]);
 
-    CVD::Image<CVD::Rgb8> img[2];
+
     CVD::img_load(img[0], argv[1]);
     CVD::img_load(img[1], argv[2]);
 
@@ -45,6 +45,8 @@ GraphcutStereo::GraphcutStereo(int argc, char **argv)
             }
         }
     }
+
+    currentF = 0;
 
     std::string output_name = fname;
     output_name.erase(output_name.begin()+output_name.length()-4,output_name.begin()+output_name.length());
@@ -83,6 +85,35 @@ void GraphcutStereo::Run()
         if(n>4)
             return;
     }
+}
+
+void GraphcutStereo::Update()
+{
+    currentF++;
+    if(currentF >= nF)
+        currentF=0;
+
+    AlphaExpansion(currentF);
+}
+
+void GraphcutStereo::glDraw()
+{
+    float dx = 0.1;
+    float dy = 0.1;
+    float dz = 0.3;
+
+    ImageRef size = disparity.size();
+    glPointSize(5);
+    glBegin(GL_POINTS);
+    for(int i=0; i<size.y; i++)
+        for(int j=0; j<size.x; j++)
+        {
+            CVD::Rgb<CVD::byte> c = img[0][i][j];
+            //glColor(c.red/255.0, c.green/255.0, c.blue/255.0);
+            glColor(c);
+            glVertex3f(i*dx,j*dy,disparity[i][j]*dz);
+        }
+    glEnd();
 }
 
 void GraphcutStereo::Display()
@@ -230,9 +261,9 @@ double GraphcutStereo::E(Image<byte> &disp)
 //    return id;
 //}
 
-bool GraphcutStereo::AlphaExpansion()
+bool GraphcutStereo::AlphaExpansion(int f)
 {
-    ImageRef size = image[0].size();
+    static ImageRef size = image[0].size();
 
     static double lastE=99999999999;
 
@@ -242,7 +273,10 @@ bool GraphcutStereo::AlphaExpansion()
 
     GraphType::node_id node_id_map[1000][1000];
 
-    for(int k=0; k<nF; k++)
+    int initF = (f==-1)?0:f;
+    int endF = (f==-1)?nF:(f-1);
+
+    for(int k=initF; k<endF; k++)
     {
         g->reset();
       //  nodeidMap.clear();
@@ -400,3 +434,5 @@ bool GraphcutStereo::AlphaExpansion()
 
     return true;
 }
+
+
