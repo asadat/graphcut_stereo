@@ -2,11 +2,13 @@
 #include "cvd/videodisplay.h"
 #include "cvd/gl_helpers.h"
 #include <sys/time.h>
+#include "cvd/vision.h"
 
 using namespace CVD;
 
 GraphcutStereo::GraphcutStereo(int argc, char **argv)
 {
+
     nF = 20;
     fname.clear();
     fname.append(argv[1]);
@@ -15,12 +17,15 @@ GraphcutStereo::GraphcutStereo(int argc, char **argv)
     CVD::img_load(img[0], argv[1]);
     CVD::img_load(img[1], argv[2]);
 
-    image[0].resize(img[0].size());
-    image[1].resize(img[1].size());
-    disparity.resize(img[1].size());
+    ImageRef size = img[0].size();
 
-    for(int i=0; i< img[0].size().y; i++)
-        for(int j=0; j< img[0].size().x; j++)
+    image[0].resize(size);
+    image[1].resize(size);
+    disparity.resize(size);
+    img0_4x4 = CVD::halfSample(img[0]);
+
+    for(int i=0; i< size.y; i++)
+        for(int j=0; j< size.x; j++)
         {
             image[0][i][j] = RGB2Y(img[0][i][j]);
             image[1][i][j] = RGB2Y(img[1][i][j]);
@@ -46,6 +51,7 @@ GraphcutStereo::GraphcutStereo(int argc, char **argv)
         }
     }
 
+    g = new GraphType(size.x*size.y*2,size.x*size.y*2*4);
     currentF = 0;
 
     std::string output_name = fname;
@@ -91,27 +97,28 @@ void GraphcutStereo::Update()
 {
     currentF++;
     if(currentF >= nF)
-        currentF=0;
+        currentF = 0;
 
     AlphaExpansion(currentF);
+
 }
 
 void GraphcutStereo::glDraw()
 {
     float dx = 0.1;
     float dy = 0.1;
-    float dz = 0.3;
+    float dz = 0.5;
 
-    ImageRef size = disparity.size();
+    ImageRef size = disparity4x4.size();
     glPointSize(5);
     glBegin(GL_POINTS);
     for(int i=0; i<size.y; i++)
         for(int j=0; j<size.x; j++)
         {
-            CVD::Rgb<CVD::byte> c = img[0][i][j];
+            CVD::Rgb<CVD::byte> c = img0_4x4[i][j];
             //glColor(c.red/255.0, c.green/255.0, c.blue/255.0);
             glColor(c);
-            glVertex3f(i*dx,j*dy,disparity[i][j]*dz);
+            glVertex3f(i*dx,j*dy,disparity4x4[i][j]*dz);
         }
     glEnd();
 }
@@ -246,35 +253,18 @@ double GraphcutStereo::E(Image<byte> &disp)
 
 }
 
-//GraphcutStereo::GraphType::node_id GraphcutStereo::add_node_if_necessary(, std::map<int, GraphType::node_id> &node_id_map, GraphType *g)
-//{
-//    GraphType::node_id  id;
-//    if ( node_id_map.find(n) != node_id_map.end() )
-//    {
-//        id = node_id_map[ n ];
-//    }
-//    else
-//    {
-//        id = g->add_node();
-//        node_id_map[ n ] = id;
-//    }
-//    return id;
-//}
 
 bool GraphcutStereo::AlphaExpansion(int f)
 {
-    static ImageRef size = image[0].size();
+    ImageRef size = image[0].size();
 
     static double lastE=99999999999;
 
     Image<byte> newdisp(disparity.copy_from_me());
     //std::map<std::pair<int,int>, GraphType::node_id> nodeidMap;
-    GraphType *g = new GraphType(size.x*size.y*2,size.x*size.y*2*4);
-
-    GraphType::node_id node_id_map[1000][1000];
 
     int initF = (f==-1)?0:f;
-    int endF = (f==-1)?nF:(f-1);
+    int endF = (f==-1)?nF:(f+1);
 
     for(int k=initF; k<endF; k++)
     {
@@ -417,6 +407,7 @@ bool GraphcutStereo::AlphaExpansion(int f)
             printf("flow reduced from:%f to:%f\n", lastE, newE);
             lastE = newE;
             disparity.copy_from(newdisp);
+            disparity4x4 = CVD::halfSample(disparity);
         }
 
         //nodeidMap.clear();

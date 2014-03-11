@@ -40,8 +40,15 @@ private:
     int F[50];
     int currentF;
 
+    GraphType *g;
+    GraphType::node_id node_id_map[1000][1000];
+
     CVD::Image<CVD::Rgb<CVD::byte> > img[2];
     CVD::Image<CVD::byte> image[2];
+
+    //subsamplings
+    CVD::Image<CVD::byte> disparity4x4;
+    CVD::Image<CVD::Rgb<CVD::byte> > img0_4x4;
 
 };
 
