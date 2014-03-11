@@ -27,8 +27,11 @@ private:
     void Display();
     double RGB2Y(CVD::Rgb8 rgb){return rgb.red * 0.299 + rgb.green * 0.587 + rgb.blue * 0.114;}
 
+    std::string fname;
+
     CVD::VideoDisplay *display;
-    int F[20];
+    int nF;
+    int F[50];
     CVD::Image<CVD::byte> image[2];
     CVD::Image<CVD::byte> disparity;
 
