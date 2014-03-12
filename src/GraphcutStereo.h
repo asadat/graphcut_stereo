@@ -33,6 +33,8 @@ private:
     void Display();
     double RGB2Y(CVD::Rgb<CVD::byte> rgb){return rgb.red * 0.299 + rgb.green * 0.587 + rgb.blue * 0.114;}
 
+    float Disparity2Depth(int disp);
+
     std::string fname;
 
     CVD::VideoDisplay *display;
@@ -49,7 +51,7 @@ private:
     //subsamplings
     CVD::Image<CVD::byte> disparity4x4;
     CVD::Image<CVD::Rgb<CVD::byte> > img0_4x4;
-
+    bool drawHighRes;
 };
 
 #endif

@@ -291,7 +291,7 @@ void Stereo::hanldeKeyPressed(std::map<unsigned char, bool> &key, bool &updateKe
 void Stereo::idle()
 {
     gstereo->Update();
-    sleep(0.1);
+    sleep(0.01);
 }
 
 void Stereo::mainLoop()
@@ -322,8 +322,8 @@ void Stereo::mainLoop()
     glEnable(GL_DEPTH_TEST);
     glutIgnoreKeyRepeat(true);
 
-    translateCamera(0, 0, 30);
-    rotateCamera(0,-1.57,0);
+    //translateCamera(0, 0, 30);
+    //rotateCamera(0,-1.57,0);
 
     // run glut
     glutMainLoop();

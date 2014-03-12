@@ -8,7 +8,7 @@ using namespace CVD;
 
 GraphcutStereo::GraphcutStereo(int argc, char **argv)
 {
-
+    drawHighRes = false;
     nF = 20;
     fname.clear();
     fname.append(argv[1]);
@@ -99,26 +99,54 @@ void GraphcutStereo::Update()
     if(currentF >= nF)
         currentF = 0;
 
-    AlphaExpansion(currentF);
+    drawHighRes = AlphaExpansion(currentF);
 
 }
 
 void GraphcutStereo::glDraw()
 {
-    float dx = 0.1;
+//    float w=10;
+//    glLineWidth(2);
+//    glColor3f(0,0,0);
+//    glBegin(GL_LINES);
+//    for(int i=0; i<=w; i++)
+//    {
+//        glVertex3f(-w/2, -w/2+i, 0);
+//        glVertex3f( w/2, -w/2+i, 0);
+//    }
+
+//    for(int i=0; i<=w; i++)
+//    {
+//        glVertex3f(-w/2+i, -w/2, 0);
+//        glVertex3f(-w/2+i,  w/2, 0);
+//    }
+
+//    glEnd();
+
+
+
+    float dx = -0.1;
     float dy = 0.1;
     float dz = 0.5;
+    int ds = 1;
+    if(drawHighRes)
+        ds=4;
 
     ImageRef size = disparity4x4.size();
     glPointSize(5);
-    glBegin(GL_POINTS);
-    for(int i=0; i<size.y; i++)
-        for(int j=0; j<size.x; j++)
+    glBegin(GL_QUADS);
+    for(int i=0; i<size.y-ds; i+=ds)
+        for(int j=0; j<size.x-ds; j+=ds)
         {
+	    
+
             CVD::Rgb<CVD::byte> c = img0_4x4[i][j];
             //glColor(c.red/255.0, c.green/255.0, c.blue/255.0);
             glColor(c);
-            glVertex3f(i*dx,j*dy,disparity4x4[i][j]*dz);
+            glVertex3f(j*dy,Disparity2Depth(disparity4x4[i][j])*dz,i*dx);
+            glVertex3f(j*dy,Disparity2Depth(disparity4x4[i+ds][j])*dz,(i+ds)*dx);
+            glVertex3f((j+ds)*dy,Disparity2Depth(disparity4x4[i+ds][j+ds])*dz,(i+ds)*dx);
+            glVertex3f((j+ds)*dy,Disparity2Depth(disparity4x4[i][j+ds])*dz,i*dx);
         }
     glEnd();
 }
@@ -253,9 +281,18 @@ double GraphcutStereo::E(Image<byte> &disp)
 
 }
 
+float GraphcutStereo::Disparity2Depth(int disp)
+{
+    return nF - disp;
+}
 
 bool GraphcutStereo::AlphaExpansion(int f)
 {
+    static int round = 0;
+    round++;
+    if(round > nF*1.5)
+        return false;
+
     ImageRef size = image[0].size();
 
     static double lastE=99999999999;
@@ -404,6 +441,7 @@ bool GraphcutStereo::AlphaExpansion(int f)
         double newE = E(newdisp);
         if( newE < lastE)
         {
+            round = 0;
             printf("flow reduced from:%f to:%f\n", lastE, newE);
             lastE = newE;
             disparity.copy_from(newdisp);
