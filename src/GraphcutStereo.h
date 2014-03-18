@@ -24,6 +24,7 @@ private:
 
     typedef Graph<double,double,double> GraphType;
 
+    void DisparityMedian();
     bool AlphaExpansion(int f=-1);
     //cost functions
     double D(int i, int j, double dp);
@@ -47,6 +48,11 @@ private:
 
     CVD::Image<CVD::Rgb<CVD::byte> > img[2];
     CVD::Image<CVD::byte> image[2];
+    TooN::Matrix<1000,1000> meanI;
+    TooN::Matrix<1000,1000> varI;
+    TooN::Matrix<1000,1000> W;
+    CVD::ImageRef imgSize;
+
 
     //subsamplings
     CVD::Image<CVD::byte> disparity4x4;

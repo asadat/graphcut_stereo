@@ -18,6 +18,7 @@ GraphcutStereo::GraphcutStereo(int argc, char **argv)
     CVD::img_load(img[1], argv[2]);
 
     ImageRef size = img[0].size();
+    imgSize = size;
 
     image[0].resize(size);
     image[1].resize(size);
@@ -30,6 +31,51 @@ GraphcutStereo::GraphcutStereo(int argc, char **argv)
             image[0][i][j] = RGB2Y(img[0][i][j]);
             image[1][i][j] = RGB2Y(img[1][i][j]);
             disparity[i][j] = 0;
+
+            int rr=2;
+            double intSum=0;
+            for(int ii=i-rr; ii<=i+rr; ii++)
+                for(int jj=j-rr; jj<=j+rr; jj++)
+                {
+                    if(ii < 0 || ii>size.y || jj < 0 || jj > size.x)
+                    {
+                        intSum += 127;
+                    }
+                    else
+                    {
+                        intSum += image[0][ii][jj];
+                    }
+                }
+
+            double intI = intSum/((rr+1)*(rr+1));
+            double sumVar=0;
+            for(int ii=i-rr; ii<=i+rr; ii++)
+                for(int jj=j-rr; jj<=j+rr; jj++)
+                {
+                    int elem = 0;
+                    if(ii < 0 || ii>size.y || jj < 0 || jj > size.x)
+                    {
+                        elem = 127;
+                    }
+                    else
+                    {
+                        elem = image[0][ii][jj];
+                    }
+
+                    sumVar += (intI - elem)*(intI - elem);
+
+                }
+
+            double var = sumVar/((rr+1)*(rr+1));
+
+            meanI[i][j] = intI;
+            varI[i][j] = var;
+        }
+
+    for(int i=0; i< size.y; i++)
+        for(int j=0; j< size.x; j++)
+        {
+
         }
 
     for(int i=0; i< nF; i++)
@@ -39,6 +85,20 @@ GraphcutStereo::GraphcutStereo(int argc, char **argv)
     {
         F[i]=nF-1-i;
         continue;
+//        int rr=2;
+//        double intSum=0;
+//        for(int ii=i-rr; ii<=i+rr; ii++)
+//            for(int jj=j-rr; jj<=j+rr; jj++)
+//            {
+//                if(ii < 0 || ii>size.y || jj < 0 || jj > size.x)
+//                {
+//                    intSum += 127;
+//                }
+//                else
+//                {
+//                    intSum += image[0][ii][jj];
+//                }
+//            }
 
         while(true)
         {
@@ -99,8 +159,13 @@ void GraphcutStereo::Update()
     if(currentF >= nF)
         currentF = 0;
 
+    bool flag = drawHighRes;
     drawHighRes = AlphaExpansion(currentF);
 
+    if(drawHighRes != flag)
+    {
+        DisparityMedian();
+    }
 }
 
 void GraphcutStereo::glDraw()
@@ -183,18 +248,39 @@ void GraphcutStereo::Display()
 
 double GraphcutStereo::D(int i, int j, double dp)
 {
+
     double val=0;
-    for(int ii=i-2; ii<=i+2;ii++)
-        for(int jj=j-2; jj<=j+2;jj++)
+    int w=1;
+    for(int ii=i-w; ii<=i+w;ii++)
+        for(int jj=j-w; jj<=j+w;jj++)
         {
+            int pixVal = 0;
             int jj2 = jj-dp;
-            if(ii <0 || jj < 0 || ii >= image[0].size().y || jj >= image[0].size().x || jj2 < 0)
-                val +=255;
+            if(ii <0 || jj < 0 || ii >= imgSize.y || jj >= imgSize.x || jj2 < 0)
+                pixVal =255;
             else
-                val += fabs(image[0][ii][jj] - image[1][ii][jj2]);
+            {
+                pixVal = fabs(image[0][ii][jj] - image[1][ii][jj2]);
+            }
+
+//            double sum = 0;
+//            int rr=1;
+//            for(int iii=ii-2*rr; iii<=ii+2*rr; iii++)
+//                for(int jjj=jj-2*rr; jjj<=jj+2*rr; jjj++)
+//                {
+//                    if(iii < 0 || iii>imgSize.y || jjj < 0 || jjj > imgSize.x)
+//                    {
+//                        continue;
+//                    }
+
+//                    if(jj2>0 && jj2 < imgSize.x)
+//                        sum = 1+ (image[0][iii][jjj] -meanI[iii][jjj])*(image[0][iii][jj2] -meanI[iii][jjj])/(varI[iii][jjj]+0.0001);
+//                }
+//            val += pixVal * sum/(2*2*rr+1);
+            val+=pixVal;
         }
 
-    val = (val/(5*5))<200?(val/(5*5)):200;
+    val = (val/(w*w))<200?(val/(w*w)):200;
 
     return val*val;
 
@@ -284,6 +370,37 @@ double GraphcutStereo::E(Image<byte> &disp)
 float GraphcutStereo::Disparity2Depth(int disp)
 {
     return nF - disp;
+}
+
+void GraphcutStereo::DisparityMedian()
+{
+    Image<CVD::byte> tmp;
+    tmp.copy_from(disparity);
+
+    int rr=5;
+    for(int i=0; i<imgSize.y; i++)
+        for(int j=0; j<imgSize.x; j++)
+        {
+            double intSum=0;
+            int n=0;
+            for(int ii=i-rr;ii<=i+rr;ii++)
+                for(int jj=j-rr;jj<=j+rr;jj++)
+                {
+                    if(ii < 0 || ii>=imgSize.y || jj < 0 || jj >= imgSize.x)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        n++;
+                        intSum += tmp[ii][jj];
+                    }
+                }
+
+            disparity[i][j] = intSum/n;
+        }
+
+    //CVD::median_filter_3x3(tmp,disparity);
 }
 
 bool GraphcutStereo::AlphaExpansion(int f)
