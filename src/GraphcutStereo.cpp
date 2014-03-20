@@ -164,7 +164,9 @@ void GraphcutStereo::Update()
 
     if(drawHighRes != flag)
     {
-        DisparityMedian();
+        Display();
+
+        //DisparityMedian();
     }
 }
 
@@ -206,8 +208,12 @@ void GraphcutStereo::glDraw()
 	    
 
             CVD::Rgb<CVD::byte> c = img0_4x4[i][j];
-            //glColor(c.red/255.0, c.green/255.0, c.blue/255.0);
             glColor(c);
+//            float d = disparity4x4[i][j]; ;
+//            d = (d<=0)?1:d;
+//            float c = 0.5-1/d;
+//            glColor3f(c,c,c);
+
             glVertex3f(j*dy,Disparity2Depth(disparity4x4[i][j])*dz,i*dx);
             glVertex3f(j*dy,Disparity2Depth(disparity4x4[i+ds][j])*dz,(i+ds)*dx);
             glVertex3f((j+ds)*dy,Disparity2Depth(disparity4x4[i+ds][j+ds])*dz,(i+ds)*dx);
@@ -251,7 +257,7 @@ double GraphcutStereo::D(int i, int j, double dp)
 
     double val=0;
     int w=1;
-    for(int ii=i-w; ii<=i+w;ii++)
+    for(int ii=i; ii<i+1;ii++)
         for(int jj=j-w; jj<=j+w;jj++)
         {
             int pixVal = 0;
@@ -280,7 +286,8 @@ double GraphcutStereo::D(int i, int j, double dp)
             val+=pixVal;
         }
 
-    val = (val/(w*w))<200?(val/(w*w)):200;
+    double n = 3;
+    val = (val/(n))<200?(val/(n)):200;
 
     return val*val;
 
