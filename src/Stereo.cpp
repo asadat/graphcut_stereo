@@ -118,6 +118,7 @@ void update_event(int ms)
 void idle_event()
 {
     Stereo::Instance()->idle();
+    glutPostRedisplay();
     //if(!ros::ok())
     // exit(0);
 }
@@ -322,7 +323,7 @@ void Stereo::mainLoop()
     glEnable(GL_DEPTH_TEST);
     glutIgnoreKeyRepeat(true);
 
-    //translateCamera(0, 0, 30);
+    translateCamera(-20, 15, -10);
     //rotateCamera(0,-1.57,0);
 
     // run glut

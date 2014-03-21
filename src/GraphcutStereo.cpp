@@ -196,8 +196,8 @@ void GraphcutStereo::glDraw()
     float dy = 0.1;
     float dz = 0.5;
     int ds = 1;
-    if(drawHighRes)
-        ds=4;
+   // if(drawHighRes)
+   //     ds=4;
 
     ImageRef size = disparity4x4.size();
     glPointSize(5);
