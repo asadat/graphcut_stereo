@@ -6,7 +6,7 @@
 
 using namespace CVD;
 
-GraphcutStereo::GraphcutStereo(int argc, char **argv)
+GraphcutStereo::GraphcutStereo(int argcint, char **argv)
 {
     drawHighRes = false;
     nF = 20;
@@ -22,7 +22,7 @@ GraphcutStereo::GraphcutStereo(int argc, char **argv)
 
     image[0].resize(size);
     image[1].resize(size);
-    disparity.resize(size);
+    //disparity.resize(size);
     img0_4x4 = CVD::halfSample(img[0]);
 
     for(int i=0; i< size.y; i++)
@@ -31,6 +31,7 @@ GraphcutStereo::GraphcutStereo(int argc, char **argv)
             image[0][i][j] = RGB2Y(img[0][i][j]);
             image[1][i][j] = RGB2Y(img[1][i][j]);
             disparity[i][j] = 0;
+            disp_sub[i][j] = 0;
 
             int rr=2;
             double intSum=0;
@@ -84,6 +85,7 @@ GraphcutStereo::GraphcutStereo(int argc, char **argv)
     for(int i=0; i< nF; i++)
     {
         F[i]=nF-1-i;
+        F[i] /= 1.0;
         continue;
 //        int rr=2;
 //        double intSum=0;
@@ -146,7 +148,7 @@ void GraphcutStereo::Run()
 //        double elapsedTime = (-t1.tv_sec + t2.tv_sec) * 1000.0;      // sec to ms
 //        elapsedTime += (-t1.tv_usec + t2.tv_usec) / 1000.0;   // us to ms
 
-//        printf("DTime: %f \n", elapsedTime);
+//        printf("DTime: %f \n", elcoarse to fineapsedTime);
         Display();
         if(n>4)
             return;
@@ -199,11 +201,11 @@ void GraphcutStereo::glDraw()
    // if(drawHighRes)
    //     ds=4;
 
-    ImageRef size = disparity4x4.size();
+
     glPointSize(5);
     glBegin(GL_QUADS);
-    for(int i=0; i<size.y-ds; i+=ds)
-        for(int j=0; j<size.x-ds; j+=ds)
+    for(int i=0; i<imgSize.y/2-ds; i+=ds)
+        for(int j=0; j<imgSize.x/2-ds; j+=ds)
         {
 	    
 
@@ -225,12 +227,12 @@ void GraphcutStereo::glDraw()
 void GraphcutStereo::Display()
 {
     Image<byte> disimg;
-    disimg.resize(disparity.size());
+    disimg.resize(imgSize);
 
-    for(int i=0; i< disparity.size().y; i++)
-        for(int j=0; j< disparity.size().x; j++)
+    for(int i=0; i< imgSize.y; i++)
+        for(int j=0; j< imgSize.x; j++)
         {
-            int cd = disparity[i][j]*12.5;
+            float cd = disparity[i][j]*5;
             if(cd > 255)
                 cd= 255;
 
@@ -252,21 +254,28 @@ void GraphcutStereo::Display()
     //std::cin.get();
 }
 
+double GraphcutStereo::SubPixVal(int x, float y, int imageIdx)
+{
+    int inty = floor(y);
+    float prey = y - inty;
+    return (1-prey)*image[imageIdx][x][inty] + prey*image[imageIdx][x][inty+1];
+}
+
 double GraphcutStereo::D(int i, int j, double dp)
 {
 
     double val=0;
-    int w=1;
+    int w=3;
     for(int ii=i; ii<i+1;ii++)
         for(int jj=j-w; jj<=j+w;jj++)
         {
             int pixVal = 0;
             int jj2 = jj-dp;
-            if(ii <0 || jj < 0 || ii >= imgSize.y || jj >= imgSize.x || jj2 < 0)
-                pixVal =255;
+            if(ii <0 || jj < 0 || ii >= imgSize.y || jj+1 >= imgSize.x || jj2 < 0)
+                pixVal =200;
             else
             {
-                pixVal = fabs(image[0][ii][jj] - image[1][ii][jj2]);
+                pixVal = fabs(image[0][ii][jj] - SubPixVal(ii,jj2,1));
             }
 
 //            double sum = 0;
@@ -286,7 +295,7 @@ double GraphcutStereo::D(int i, int j, double dp)
             val+=pixVal;
         }
 
-    double n = 3;
+    double n = 2*w+1;
     val = (val/(n))<200?(val/(n)):200;
 
     return val*val;
@@ -342,8 +351,8 @@ double GraphcutStereo::V(int i1, int j1, double dp1, int i2, int j2, double dp2)
 //    return val;
 
     double val = 0;
-    val = 10*fabs(dp1-dp2);
-    if(val >= 20)
+    val = 2*fabs(dp1-dp2);
+    if(val > 20)
     {
         val = 20;
     }
@@ -351,7 +360,7 @@ double GraphcutStereo::V(int i1, int j1, double dp1, int i2, int j2, double dp2)
     return val;
 }
 
-double GraphcutStereo::E(Image<byte> &disp)
+double GraphcutStereo::E(TooN::Matrix<1000,1000> &disp)
 {
     double energy = 0;
     ImageRef size = image[0].size();
@@ -374,43 +383,52 @@ double GraphcutStereo::E(Image<byte> &disp)
 
 }
 
-float GraphcutStereo::Disparity2Depth(int disp)
+void GraphcutStereo::HalfSample(TooN::Matrix<1000,1000> &src, TooN::Matrix<1000,1000> &dest)
+{
+    for(int i=0; i<500; i++)
+        for(int j=0; j<500; j++)
+        {
+            dest[i][j] = (src[2*i][2*j]+src[2*i+1][2*j]+src[2*i+1][2*j+1]+src[2*i][2*j+1])*0.25;
+        }
+}
+
+float GraphcutStereo::Disparity2Depth(float disp)
 {
     return nF - disp;
 }
 
 void GraphcutStereo::DisparityMedian()
 {
-    Image<CVD::byte> tmp;
-    tmp.copy_from(disparity);
+//    Image<CVD::byte> tmp;
+//    tmp.copy_from(disparity);
 
-    int rr=5;
-    for(int i=0; i<imgSize.y; i++)
-        for(int j=0; j<imgSize.x; j++)
-        {
-            double intSum=0;
-            int n=0;
-            for(int ii=i-rr;ii<=i+rr;ii++)
-                for(int jj=j-rr;jj<=j+rr;jj++)
-                {
-                    if(ii < 0 || ii>=imgSize.y || jj < 0 || jj >= imgSize.x)
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        n++;
-                        intSum += tmp[ii][jj];
-                    }
-                }
+//    int rr=5;
+//    for(int i=0; i<imgSize.y; i++)
+//        for(int j=0; j<imgSize.x; j++)
+//        {
+//            double intSum=0;
+//            int n=0;
+//            for(int ii=i-rr;ii<=i+rr;ii++)
+//                for(int jj=j-rr;jj<=j+rr;jj++)
+//                {
+//                    if(ii < 0 || ii>=imgSize.y || jj < 0 || jj >= imgSize.x)
+//                    {
+//                        continue;
+//                    }
+//                    else
+//                    {
+//                        n++;
+//                        intSum += tmp[ii][jj];
+//                    }
+//                }
 
-            disparity[i][j] = intSum/n;
-        }
+//            disparity[i][j] = intSum/n;
+//        }
 
-    //CVD::median_filter_3x3(tmp,disparity);
+
 }
 
-bool GraphcutStereo::AlphaExpansion(int f)
+bool GraphcutStereo::AlphaExpansion(int ff)
 {
     static int round = 0;
     round++;
@@ -421,11 +439,12 @@ bool GraphcutStereo::AlphaExpansion(int f)
 
     static double lastE=99999999999;
 
-    Image<byte> newdisp(disparity.copy_from_me());
+    TooN::Matrix<1000,1000> newdisp = disparity;
+
     //std::map<std::pair<int,int>, GraphType::node_id> nodeidMap;
 
-    int initF = (f==-1)?0:f;
-    int endF = (f==-1)?nF:(f+1);
+    int initF = (ff==-1)?0:ff;
+    int endF = (ff==-1)?nF:(ff+1);
 
     for(int k=initF; k<endF; k++)
     {
@@ -436,8 +455,8 @@ bool GraphcutStereo::AlphaExpansion(int f)
         timeval t1;
        gettimeofday(&t1, NULL);
 
-        int f = F[k];
-        printf("alpha = %d\n", f);
+        float f = F[k];
+        printf("alpha = %f\n", f);
 
         for(int i=0; i<size.y; i++)
             for(int j=0; j<size.x; j++)
@@ -507,7 +526,7 @@ bool GraphcutStereo::AlphaExpansion(int f)
 ////                pxr.second = j;
 
 ////                GraphType::node_id lnode = nodeidMap[pxl];
-////                GraphType::node_id rnode = nodeidMap[pxr];
+////                GraphType::nodinte_id rnode = nodeidMap[pxr];
 ////                GraphType::node_id dnode = nodeidMap[pxd];
 
 //                GraphType::node_id lnode = node_id_map[i][j];
@@ -568,8 +587,8 @@ bool GraphcutStereo::AlphaExpansion(int f)
             round = 0;
             printf("flow reduced from:%f to:%f\n", lastE, newE);
             lastE = newE;
-            disparity.copy_from(newdisp);
-            disparity4x4 = CVD::halfSample(disparity);
+            disparity= newdisp;
+            //HalfSample(disparity, disparity4x4);
         }
 
         //nodeidMap.clear();
