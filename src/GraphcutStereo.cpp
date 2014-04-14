@@ -32,44 +32,44 @@ GraphcutStereo::GraphcutStereo(int argc, char **argv)
             image[1][i][j] = RGB2Y(img[1][i][j]);
             disparity[i][j] = 0;
 
-            int rr=2;
-            double intSum=0;
-            for(int ii=i-rr; ii<=i+rr; ii++)
-                for(int jj=j-rr; jj<=j+rr; jj++)
-                {
-                    if(ii < 0 || ii>size.y || jj < 0 || jj > size.x)
-                    {
-                        intSum += 127;
-                    }
-                    else
-                    {
-                        intSum += image[0][ii][jj];
-                    }
-                }
+//            int rr=2;
+//            double intSum=0;
+//            for(int ii=i-rr; ii<=i+rr; ii++)
+//                for(int jj=j-rr; jj<=j+rr; jj++)
+//                {
+//                    if(ii < 0 || ii>size.y || jj < 0 || jj > size.x)
+//                    {
+//                        intSum += 127;
+//                    }
+//                    else
+//                    {
+//                        intSum += image[0][ii][jj];
+//                    }
+//                }
 
-            double intI = intSum/((rr+1)*(rr+1));
-            double sumVar=0;
-            for(int ii=i-rr; ii<=i+rr; ii++)
-                for(int jj=j-rr; jj<=j+rr; jj++)
-                {
-                    int elem = 0;
-                    if(ii < 0 || ii>size.y || jj < 0 || jj > size.x)
-                    {
-                        elem = 127;
-                    }
-                    else
-                    {
-                        elem = image[0][ii][jj];
-                    }
+//            double intI = intSum/((rr+1)*(rr+1));
+//            double sumVar=0;
+//            for(int ii=i-rr; ii<=i+rr; ii++)
+//                for(int jj=j-rr; jj<=j+rr; jj++)
+//                {
+//                    int elem = 0;
+//                    if(ii < 0 || ii>size.y || jj < 0 || jj > size.x)
+//                    {
+//                        elem = 127;
+//                    }
+//                    else
+//                    {
+//                        elem = image[0][ii][jj];
+//                    }
 
-                    sumVar += (intI - elem)*(intI - elem);
+//                    sumVar += (intI - elem)*(intI - elem);
 
-                }
+//                }
 
-            double var = sumVar/((rr+1)*(rr+1));
+//            double var = sumVar/((rr+1)*(rr+1));
 
-            meanI[i][j] = intI;
-            varI[i][j] = var;
+//            meanI[i][j] = intI;
+//            varI[i][j] = var;
         }
 
     for(int i=0; i< size.y; i++)
@@ -414,7 +414,7 @@ bool GraphcutStereo::AlphaExpansion(int f)
 {
     static int round = 0;
     round++;
-    if(round > nF*1.5)
+    if(round > nF+1)
         return false;
 
     ImageRef size = image[0].size();
