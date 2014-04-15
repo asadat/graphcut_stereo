@@ -8,6 +8,11 @@ using namespace CVD;
 
 GraphcutStereo::GraphcutStereo(int argc, char **argv)
 {
+    if(argc>3)
+        alpha_beta_swap = (strcmp(argv[3],"-swap")==0?true:false);
+    else
+        alpha_beta_swap = false;
+
     drawHighRes = false;
     nF = 40;
     fname.clear();
@@ -30,7 +35,7 @@ GraphcutStereo::GraphcutStereo(int argc, char **argv)
         {
             image[0][i][j] = RGB2Y(img[0][i][j]);
             image[1][i][j] = RGB2Y(img[1][i][j]);
-            disparity[i][j] = 0;
+            disparity[i][j] = rand()%(nF/2);
 
 //            int rr=2;
 //            double intSum=0;
@@ -156,11 +161,14 @@ void GraphcutStereo::Run()
 void GraphcutStereo::Update()
 {
     currentF++;
-    if(currentF >= nF)
+    if(currentF >= (alpha_beta_swap?nF*nF/4:nF))
         currentF = 0;
 
     bool flag = drawHighRes;
-    drawHighRes = AlphaExpansion(currentF);
+    if(alpha_beta_swap)
+        drawHighRes = AlphaBetaSwap(currentF%(nF/2), currentF/(nF/2));
+    else
+        drawHighRes = AlphaExpansion(currentF);
 
     if(drawHighRes != flag)
     {
@@ -239,7 +247,11 @@ void GraphcutStereo::Display()
 
     std::string output_name = fname;
     output_name.erase(output_name.begin()+output_name.length()-4,output_name.begin()+output_name.length());
-    CVD::img_save(disimg,output_name+ "disparity.png");
+    if(alpha_beta_swap)
+        CVD::img_save(disimg,output_name+ "disparity-swap.png");
+    else
+        CVD::img_save(disimg,output_name+ "disparity-expansion.png");
+
 //    glDrawPixels(disimg);
 
 ////    glColor3f(1,0,0);
@@ -349,7 +361,11 @@ double GraphcutStereo::V(int i1, int j1, double dp1, int i2, int j2, double dp2)
 //    return val;
 
     double val = 0;
-    val = 5*fabs(dp1-dp2);
+    if(alpha_beta_swap)
+        val = 50*fabs(dp1-dp2); //alpha beta swap
+    else
+        val = 5*fabs(dp1-dp2); //alpha expansion
+
     if(val >= 50)
     {
         val = 50;
@@ -415,6 +431,227 @@ void GraphcutStereo::DisparityMedian()
         }
 
     //CVD::median_filter_3x3(tmp,disparity);
+}
+
+bool GraphcutStereo::AlphaBetaSwap(int f1, int f2)
+{
+    static int round = 0;
+    round++;
+    if(round > nF*nF)
+        return false;
+
+    ImageRef size = image[0].size();
+
+    static double lastE=99999999999;
+
+    Image<float> newdisp(disparity.copy_from_me());
+    //std::map<std::pair<int,int>, GraphType::node_id> nodeidMap;
+
+    //int initF = (f==-1)?0:f;
+    //int endF = (f==-1)?nF:(f+1);
+
+    //for(int k=initF; k<endF; k++)
+    {
+        g->reset();
+      //  nodeidMap.clear();
+
+        timeval t2;
+        timeval t1;
+       gettimeofday(&t1, NULL);
+
+        //double f = ((double)(F[k]))*0.5;
+        //printf("alpha = %f\n", f);
+
+        for(int i=0; i<size.y; i++)
+            for(int j=0; j<size.x; j++)
+            {
+                node_id_map[i][j] = -1;
+            }
+
+        for(int i=1; i<size.y-1; i++)
+            for(int j=1; j<size.x-1; j++)
+            {
+                newdisp[i][j] = disparity[i][j];
+
+                if(((int)newdisp[i][j]) != f1 && ((int)newdisp[i][j]) != f2)
+                    continue;
+
+                bool brnode = (((int)newdisp[i][j+1]) == f1 || ((int)newdisp[i][j+1]) == f2);
+                bool bdnode =  (((int)newdisp[i+1][j]) == f1 || ((int)newdisp[i+1][j]) == f2);
+                bool bunode = (((int)newdisp[i-1][j]) == f1 || ((int)newdisp[i-1][j]) == f2);
+                bool blnode =  (((int)newdisp[i][j-1]) == f1 || ((int)newdisp[i][j-1]) == f2);
+
+                GraphType::node_id nid = node_id_map[i][j];
+                if(nid == -1)
+                {
+                    nid = g->add_node();
+                    node_id_map[i][j] = nid;
+                }
+
+
+                double t1 = D(i,j,f1);
+                t1 += (brnode?0 :V(i,j,f1, i,j+1,disparity[i][j+1]))
+                     +(blnode?0:V(i,j,f1, i,j-1,disparity[i][j-1]))
+                     +(bunode?0 :V(i,j,f1, i+1,j,disparity[i+1][j]))
+                     +(bdnode?0 :V(i,j,f1, i-1,j,disparity[i-1][j]));
+
+                double t2 = D(i,j,f2);
+                t2 += (brnode?0 :V(i,j,f2, i,j+1,disparity[i][j+1]))
+                     +(blnode?0:V(i,j,f2, i,j-1,disparity[i][j-1]))
+                     +(bunode?0 :V(i,j,f2, i+1,j,disparity[i+1][j]))
+                     +(bdnode?0 :V(i,j,f2, i-1,j,disparity[i-1][j]));
+
+
+                g->add_tweights(nid, t1, t2);
+
+
+                GraphType::node_id lnode = nid;
+                GraphType::node_id rnode = node_id_map[i][j+1];
+                GraphType::node_id dnode = node_id_map[i+1][j];
+
+
+
+                if(rnode == -1 && brnode)
+                {
+                    rnode = g->add_node();
+                    node_id_map[i][j+1] = rnode;
+                }
+
+                if(dnode == -1 && bdnode)
+                {
+                    dnode = g->add_node();
+                    node_id_map[i+1][j] = dnode;
+                }
+
+                if(brnode)
+                {
+                  g->add_edge(lnode, rnode, V(i,j,f1, i,j+1,f2),0);
+                }
+
+                if(bdnode)
+                {
+                  g->add_edge(lnode, dnode, V(i,j,f1, i+1,j,f2),0);
+                }
+
+
+//                GraphType::node_id anid = g->add_node();
+
+//                g->add_tweights(anid, V(i,j,disparity[i][j], i,j+1,disparity[i][j+1]), 0);
+
+//                g->add_edge(lnode, anid, V(i,j,disparity[i][j], i,j+1,f),0);
+//                g->add_edge(anid, rnode, V(i,j,f, i,j+1,disparity[i][j+1]), 0);
+
+//                GraphType::node_id adnid = g->add_node();
+//                g->add_tweights(adnid, V(i,j,disparity[i][j], i+1,j,disparity[i+1][j]), 0);
+//                g->add_edge(lnode, adnid, V(i,j,disparity[i][j], i+1,j,f),0);
+//                g->add_edge(adnid, dnode, V(i,j,f, i+1,j,disparity[i+1][j]),0);
+            }
+
+//        for(int i=0; i<size.y-1; i++)
+//            for(int j=0; j<size.x-1; j++)
+//            {
+////                std::pair<int, int> pxl;
+////                pxl.first = i;
+////                pxl.second = j;
+////                std::pair<int, int> pxr;
+////                pxr.first = i;
+////                pxr.second = j+1;
+
+////                std::pair<int, int> pxd;
+////                pxr.first = i+1;
+////                pxr.second = j;
+
+////                GraphType::node_id lnode = nodeidMap[pxl];
+////                GraphType::node_id rnode = nodeidMap[pxr];
+////                GraphType::node_id dnode = nodeidMap[pxd];
+
+//                GraphType::node_id lnode = node_id_map[i][j];
+//                GraphType::node_id rnode = node_id_map[i][j+1];
+//                GraphType::node_id dnode = node_id_map[i+1][j];
+
+//                GraphType::node_id nid = g->add_node();
+
+//                g->add_tweights(nid, V(i,j,disparity[i][j], i,j+1,disparity[i][j+1]), 0);
+//                g->add_edge(lnode, nid, V(i,j,disparity[i][j], i,j+1,f),0);
+//                g->add_edge(nid, rnode, V(i,j,f, i,j+1,disparity[i][j+1]), 0);
+
+//                GraphType::node_id dnid = g->add_node();
+//                g->add_tweights(dnid, V(i,j,disparity[i][j], i+1,j,disparity[i+1][j]), 0);
+//                g->add_edge(lnode, dnid, V(i,j,disparity[i][j], i+1,j,f),0);
+//                g->add_edge(dnid, dnode, V(i,j,f, i+1,j,disparity[i+1][j]),0);
+
+//            }
+
+        timeval t22;
+        timeval t12;
+
+
+       gettimeofday(&t12, NULL);
+
+       double elapsedTime3 = (-t1.tv_sec + t12.tv_sec) * 1000.0;      // sec to ms
+       elapsedTime3 += (-t1.tv_usec + t12.tv_usec) / 1000.0;   // us to ms
+
+       //printf("Setup Time: %f \n", elapsedTime3/1000.0);
+
+        double flow = g->maxflow();
+       // printf("flow:%f\n", flow);
+        gettimeofday(&t22, NULL);
+
+        double elapsedTime2 = (-t12.tv_sec + t22.tv_sec) * 1000.0;      // sec to ms
+        elapsedTime2 += (-t12.tv_usec + t22.tv_usec) / 1000.0;   // us to ms
+
+       // printf("Flow Time: %f \n", elapsedTime2/1000.0);
+
+        for(int i=0; i<size.y; i++)
+            for(int j=0; j<size.x; j++)
+            {
+//                std::pair<int, int> px;
+//                px.first = i;
+//                px.second = j;
+//                GraphType::node_id nodeid = nodeidMap[px];
+                GraphType::node_id nodeid = node_id_map[i][j];
+                if(nodeid!= -1)
+                {
+                    if(g->what_segment(nodeid) == GraphType::SOURCE)
+                    {
+                        //printf("In source ..\n");
+                        newdisp[i][j] = f2;
+                    }
+                    else
+                    {
+                        newdisp[i][j] = f1;
+                    }
+                }
+                else
+                {
+                    newdisp[i][j] = disparity[i][j];
+                }
+            }
+
+        double newE = E(newdisp);
+        if( newE < lastE)
+        {
+           //round = 0;
+           printf("flow reduced from:%f to:%f Time:%f\n", lastE, newE,elapsedTime2/1000.0);
+            lastE = newE;
+            disparity.copy_from(newdisp);
+            disparity4x4 = CVD::halfSample(disparity);
+        }
+
+        //nodeidMap.clear();
+        //delete g;
+
+
+        gettimeofday(&t2, NULL);
+
+        double elapsedTime = (-t1.tv_sec + t2.tv_sec) * 1000.0;      // sec to ms
+        elapsedTime += (-t1.tv_usec + t2.tv_usec) / 1000.0;   // us to ms
+
+       // printf("DTime: %f \n", elapsedTime/1000.0);
+    }
+
+    return true;
+
 }
 
 bool GraphcutStereo::AlphaExpansion(int f)
@@ -543,7 +780,7 @@ bool GraphcutStereo::AlphaExpansion(int f)
        double elapsedTime3 = (-t1.tv_sec + t12.tv_sec) * 1000.0;      // sec to ms
        elapsedTime3 += (-t1.tv_usec + t12.tv_usec) / 1000.0;   // us to ms
 
-       printf("Setup Time: %f \n", elapsedTime3/1000.0);
+       //printf("Setup Time: %f \n", elapsedTime3/1000.0);
 
         double flow = g->maxflow();
        // printf("flow:%f\n", flow);
@@ -552,7 +789,7 @@ bool GraphcutStereo::AlphaExpansion(int f)
         double elapsedTime2 = (-t12.tv_sec + t22.tv_sec) * 1000.0;      // sec to ms
         elapsedTime2 += (-t12.tv_usec + t22.tv_usec) / 1000.0;   // us to ms
 
-        printf("Flow Time: %f \n", elapsedTime2/1000.0);
+        //printf("Flow Time: %f \n", elapsedTime2/1000.0);
 
         for(int i=0; i<size.y; i++)
             for(int j=0; j<size.x; j++)
@@ -588,7 +825,7 @@ bool GraphcutStereo::AlphaExpansion(int f)
         double elapsedTime = (-t1.tv_sec + t2.tv_sec) * 1000.0;      // sec to ms
         elapsedTime += (-t1.tv_usec + t2.tv_usec) / 1000.0;   // us to ms
 
-        printf("DTime: %f \n", elapsedTime/1000.0);
+       // printf("DTime: %f \n", elapsedTime/1000.0);
     }
 
 

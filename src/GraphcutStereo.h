@@ -26,6 +26,8 @@ private:
 
     void DisparityMedian();
     bool AlphaExpansion(int f=-1);
+    bool AlphaBetaSwap(int f1, int f2);
+
     //cost functions
     double D(int i, int j, double dp);
     double V(int i1, int j1, double dp1, int i2, int j2, double dp2);
@@ -54,6 +56,7 @@ private:
     TooN::Matrix<1000,1000> W;
     CVD::ImageRef imgSize;
 
+    bool alpha_beta_swap;
 
     //subsamplings
     CVD::Image<float> disparity4x4;
