@@ -9,7 +9,7 @@ using namespace CVD;
 GraphcutStereo::GraphcutStereo(int argc, char **argv)
 {
     drawHighRes = false;
-    nF = 20;
+    nF = 40;
     fname.clear();
     fname.append(argv[1]);
 
@@ -252,6 +252,13 @@ void GraphcutStereo::Display()
     //std::cin.get();
 }
 
+double GraphcutStereo::SubPixVal(int x, float y, int imageIdx)
+{
+    int inty = floor(y);
+    float prey = y - inty;
+    return (1-prey)*image[imageIdx][x][inty] + prey*image[imageIdx][x][inty+1];
+}
+
 double GraphcutStereo::D(int i, int j, double dp)
 {
 
@@ -266,7 +273,7 @@ double GraphcutStereo::D(int i, int j, double dp)
                 pixVal =255;
             else
             {
-                pixVal = fabs(image[0][ii][jj] - image[1][ii][jj2]);
+                pixVal = fabs(image[0][ii][jj] - SubPixVal(ii,jj2,1));
             }
 
 //            double sum = 0;
@@ -342,16 +349,16 @@ double GraphcutStereo::V(int i1, int j1, double dp1, int i2, int j2, double dp2)
 //    return val;
 
     double val = 0;
-    val = 10*fabs(dp1-dp2);
-    if(val >= 20)
+    val = 5*fabs(dp1-dp2);
+    if(val >= 50)
     {
-        val = 20;
+        val = 50;
     }
 
     return val;
 }
 
-double GraphcutStereo::E(Image<byte> &disp)
+double GraphcutStereo::E(Image<float> &disp)
 {
     double energy = 0;
     ImageRef size = image[0].size();
@@ -381,7 +388,7 @@ float GraphcutStereo::Disparity2Depth(int disp)
 
 void GraphcutStereo::DisparityMedian()
 {
-    Image<CVD::byte> tmp;
+    Image<float> tmp;
     tmp.copy_from(disparity);
 
     int rr=5;
@@ -421,7 +428,7 @@ bool GraphcutStereo::AlphaExpansion(int f)
 
     static double lastE=99999999999;
 
-    Image<byte> newdisp(disparity.copy_from_me());
+    Image<float> newdisp(disparity.copy_from_me());
     //std::map<std::pair<int,int>, GraphType::node_id> nodeidMap;
 
     int initF = (f==-1)?0:f;
@@ -436,8 +443,8 @@ bool GraphcutStereo::AlphaExpansion(int f)
         timeval t1;
        gettimeofday(&t1, NULL);
 
-        int f = F[k];
-        printf("alpha = %d\n", f);
+        double f = ((double)(F[k]))*0.5;
+        printf("alpha = %f\n", f);
 
         for(int i=0; i<size.y; i++)
             for(int j=0; j<size.x; j++)

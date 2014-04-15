@@ -16,7 +16,7 @@ public:
     void Run();
     void Update();
 
-    CVD::Image<CVD::byte> disparity;
+    CVD::Image<float> disparity;
 
     void glDraw();
 
@@ -29,7 +29,8 @@ private:
     //cost functions
     double D(int i, int j, double dp);
     double V(int i1, int j1, double dp1, int i2, int j2, double dp2);
-    double E(CVD::Image<CVD::byte> & disp);
+    double E(CVD::Image<float> & disp);
+    double SubPixVal(int x, float y, int imageIdx);
 
     void Display();
     double RGB2Y(CVD::Rgb<CVD::byte> rgb){return rgb.red * 0.299 + rgb.green * 0.587 + rgb.blue * 0.114;}
@@ -55,7 +56,7 @@ private:
 
 
     //subsamplings
-    CVD::Image<CVD::byte> disparity4x4;
+    CVD::Image<float> disparity4x4;
     CVD::Image<CVD::Rgb<CVD::byte> > img0_4x4;
     bool drawHighRes;
 };
