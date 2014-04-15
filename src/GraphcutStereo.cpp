@@ -167,6 +167,7 @@ void GraphcutStereo::Update()
     bool flag = drawHighRes;
     if(alpha_beta_swap)
         drawHighRes = AlphaBetaSwap(((double)(currentF%(nF)))*0.5, ((double)(currentF/(nF)))*0.5);
+        //drawHighRes = AlphaBetaSwap(((double)(currentF%(nF))), ((double)(currentF/(nF))));
     else
         drawHighRes = AlphaExpansion(currentF);
 
@@ -362,13 +363,20 @@ double GraphcutStereo::V(int i1, int j1, double dp1, int i2, int j2, double dp2)
 
     double val = 0;
     if(alpha_beta_swap)
-        val = 50*fabs(dp1-dp2); //alpha beta swap
-    else
-        val = 5*fabs(dp1-dp2); //alpha expansion
-
-    if(val >= 50)
     {
-        val = 50;
+        val = 200*fabs(dp1-dp2); //alpha beta swap
+        if(val >= 100)
+        {
+            val = 100;
+        }
+    }
+    else
+    {
+        val = 5*fabs(dp1-dp2); //alpha expansion
+        if(val >= 50)
+        {
+            val = 50;
+        }
     }
 
     return val;
@@ -437,7 +445,7 @@ bool GraphcutStereo::AlphaBetaSwap(double f1, double f2)
 {
     static int round = 0;
     round++;
-    if(round > nF*nF*4)
+    if(round > nF*nF*2)
     {
         Display();
         exit(0);
@@ -635,7 +643,7 @@ bool GraphcutStereo::AlphaBetaSwap(double f1, double f2)
         if( newE < lastE)
         {
            //round = 0;
-           printf("flow reduced from:%f to:%f Time:%f\n", lastE, newE,elapsedTime2/1000.0);
+           printf("DTime:%f %%%.1f\n", elapsedTime2/1000.0, 100*round/(nF*nF*2.0f));
             lastE = newE;
             disparity.copy_from(newdisp);
             disparity4x4 = CVD::halfSample(disparity);
