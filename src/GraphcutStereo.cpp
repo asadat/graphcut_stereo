@@ -13,8 +13,14 @@ GraphcutStereo::GraphcutStereo(int argc, char **argv)
     else
         alpha_beta_swap = false;
 
+    subpixel = false;
+
     drawHighRes = false;
-    nF = 40;
+    if(subpixel)
+        nF = 40;
+    else
+        nF = 20;
+
     fname.clear();
     fname.append(argv[1]);
 
@@ -166,8 +172,12 @@ void GraphcutStereo::Update()
 
     bool flag = drawHighRes;
     if(alpha_beta_swap)
-        drawHighRes = AlphaBetaSwap(((double)(currentF%(nF)))*0.5, ((double)(currentF/(nF)))*0.5);
-        //drawHighRes = AlphaBetaSwap(((double)(currentF%(nF))), ((double)(currentF/(nF))));
+    {
+        if(subpixel)
+            drawHighRes = AlphaBetaSwap(((double)(currentF%(nF)))*0.5, ((double)(currentF/(nF)))*0.5);
+        else
+            drawHighRes = AlphaBetaSwap(((currentF%(nF))), (currentF/(nF)));
+    }
     else
         drawHighRes = AlphaExpansion(currentF);
 
@@ -211,8 +221,8 @@ void GraphcutStereo::glDraw()
     ImageRef size = disparity4x4.size();
     glPointSize(5);
     glBegin(GL_QUADS);
-    for(int i=0; i<size.y-ds; i+=ds)
-        for(int j=0; j<size.x-ds; j+=ds)
+    for(int i=1; i<size.y-ds; i+=ds)
+        for(int j=1; j<size.x-ds; j+=ds)
         {
 	    
 
@@ -277,7 +287,7 @@ double GraphcutStereo::D(int i, int j, double dp)
 
     double val=0;
     int w=1;
-    for(int ii=i; ii<i+1;ii++)
+    for(int ii=i-w; ii<=i+w;ii++)
         for(int jj=j-w; jj<=j+w;jj++)
         {
             int pixVal = 0;
@@ -306,7 +316,7 @@ double GraphcutStereo::D(int i, int j, double dp)
             val+=pixVal;
         }
 
-    double n = 3;
+    double n = 9;
     val = (val/(n))<200?(val/(n)):200;
 
     return val*val;
@@ -364,7 +374,7 @@ double GraphcutStereo::V(int i1, int j1, double dp1, int i2, int j2, double dp2)
     double val = 0;
     if(alpha_beta_swap)
     {
-        val = 200*fabs(dp1-dp2); //alpha beta swap
+        val = 100*fabs(dp1-dp2); //alpha beta swap
         if(val >= 100)
         {
             val = 100;
@@ -372,7 +382,7 @@ double GraphcutStereo::V(int i1, int j1, double dp1, int i2, int j2, double dp2)
     }
     else
     {
-        val = 5*fabs(dp1-dp2); //alpha expansion
+        val = 50*fabs(dp1-dp2); //alpha expansion
         if(val >= 50)
         {
             val = 50;
@@ -445,7 +455,7 @@ bool GraphcutStereo::AlphaBetaSwap(double f1, double f2)
 {
     static int round = 0;
     round++;
-    if(round > nF*nF*2)
+    if(round > nF*nF*4)
     {
         Display();
         exit(0);
@@ -501,17 +511,18 @@ bool GraphcutStereo::AlphaBetaSwap(double f1, double f2)
 
 
                 double t1 = D(i,j,f1);
-                t1 += (brnode?0 :V(i,j,f1, i,j+1,disparity[i][j+1]))
+                double n_t1 = (brnode?0 :V(i,j,f1, i,j+1,disparity[i][j+1]))
                      +(blnode?0:V(i,j,f1, i,j-1,disparity[i][j-1]))
                      +(bunode?0 :V(i,j,f1, i+1,j,disparity[i+1][j]))
                      +(bdnode?0 :V(i,j,f1, i-1,j,disparity[i-1][j]));
+                t1 += n_t1/4;
 
                 double t2 = D(i,j,f2);
-                t2 += (brnode?0 :V(i,j,f2, i,j+1,disparity[i][j+1]))
+                double n_t2 = (brnode?0 :V(i,j,f2, i,j+1,disparity[i][j+1]))
                      +(blnode?0:V(i,j,f2, i,j-1,disparity[i][j-1]))
                      +(bunode?0 :V(i,j,f2, i+1,j,disparity[i+1][j]))
                      +(bdnode?0 :V(i,j,f2, i-1,j,disparity[i-1][j]));
-
+                t2 += n_t2/4;
 
                 g->add_tweights(nid, t1, t2);
 
@@ -694,7 +705,7 @@ bool GraphcutStereo::AlphaExpansion(int f)
         timeval t1;
        gettimeofday(&t1, NULL);
 
-        double f = ((double)(F[k]))*0.5;
+        double f = ((double)(F[k]))*(subpixel?0.5:1);
         printf("alpha = %f\n", f);
 
         for(int i=0; i<size.y; i++)

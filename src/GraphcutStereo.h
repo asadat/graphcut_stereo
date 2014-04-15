@@ -57,6 +57,7 @@ private:
     CVD::ImageRef imgSize;
 
     bool alpha_beta_swap;
+    bool subpixel;
 
     //subsamplings
     CVD::Image<float> disparity4x4;

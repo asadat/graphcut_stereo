@@ -34,9 +34,8 @@
 %\usepackage{amssymb}  % assumes amsmath package installed
 \usepackage{enumerate}
 
-\title{\LARGE \bf
+\title{Project Report:\\\LARGE \bf
 Stereo Matching using Graphcut-based Optimization}
-
 
 \author{Seyed Abbas Sadat\\
 Simon Fraser University\\
@@ -53,11 +52,118 @@ sas21@sfu.ca% <-this % stops a space
 \pagestyle{empty}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{abstract}
-\end{abstract}
 
 \section{INTRODUCTION}
 
+\begin{figure*}[t]
+        \centering
+        \begin{subfigure}[b]{0.3\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{imgs/l4.png}
+                \caption{"Art" Color image}
+                \label{fig:trees}
+        \end{subfigure}%
+                ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.3\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{imgs/disp4.png}
+                \caption{Ground Truth}
+                \label{fig:farm}
+        \end{subfigure}
+                ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.3\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{imgs/l4disparity-expansion.png}
+                \caption{$\alpha$-expansion}
+                \label{fig:farm}
+        \end{subfigure}
+                ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.3\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{imgs/l4disparity-swap.png}
+                \caption{$\alpha\beta$-swap}
+                \label{fig:farm}
+        \end{subfigure}
+                        ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.3\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{imgs/l4disparity-expansion-sub.png}
+                \caption{$\alpha$-expansion - subpixel accuracy}
+                \label{fig:farm}
+        \end{subfigure}
+                ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.3\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{imgs/l4disparity-swap-sub.png}
+                \caption{$\alpha\beta$-swap - subpixel accuracy}
+                \label{fig:farm}
+        \end{subfigure}
+        \caption{Disparity image for the "Art" dataset using the both $\alpha\beta$-swap and $\alpha$-expansion with pixel and subpixel accuracies.}
+        \label{fig:realmaps}
+\end{figure*}
+
+\begin{figure*}[t]
+        \centering
+        \begin{subfigure}[b]{0.3\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{imgs/l2.png}
+                \caption{"Wood1" Color image}
+                \label{fig:trees}
+        \end{subfigure}%
+                ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.3\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{imgs/disp2.png}
+                \caption{Ground Truth}
+                \label{fig:farm}
+        \end{subfigure}
+                ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.3\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{imgs/l2disparity-expansion.png}
+                \caption{$\alpha$-expansion}
+                \label{fig:farm}
+        \end{subfigure}
+                ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.3\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{imgs/l2disparity-swap.png}
+                \caption{$\alpha\beta$-swap}
+                \label{fig:farm}
+        \end{subfigure}
+                        ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.3\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{imgs/l2disparity-expansion-sub.png}
+                \caption{$\alpha$-expansion - subpixel accuracy}
+                \label{fig:farm}
+        \end{subfigure}
+                ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.3\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{imgs/l2disparity-swap-sub.png}
+                \caption{$\alpha\beta$-swap - subpixel accuracy}
+                \label{fig:farm}
+        \end{subfigure}
+        \caption{Disparity image for the "Wood1" dataset using the both $\alpha\beta$-swap and $\alpha$-expansion with pixel and subpixel accuracies.}
+        \label{fig:realmaps}
+\end{figure*}
+
+In this project we developed a stereo matching system based on graph-cut optimization framework \cite{boykov2001fast}. In stereo matching problem, 2 images taken from 2 cameras that are in the same hozirontal like The input to the system is a pare of images 
+
+\section{Graphcut-based Optimization}
+\section{Stereo Matching}
+\section{Experiments and Results}
 \bibliographystyle{ieeetr} 
 \bibliography{refs}
 
