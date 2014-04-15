@@ -300,7 +300,7 @@ void Stereo::mainLoop()
 
     glutInitWindowSize(800, 600);
     glutInitDisplayMode(GLUT_RGBA | GLUT_ALPHA | GLUT_DOUBLE | GLUT_DEPTH);
-    glutCreateWindow("SamplingSim");
+    glutCreateWindow("Stereo Graphcut");
     glClearColor(1,1,1,0);
     glEnable(GL_POINT_SMOOTH);
 

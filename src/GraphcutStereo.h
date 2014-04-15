@@ -26,7 +26,7 @@ private:
 
     void DisparityMedian();
     bool AlphaExpansion(int f=-1);
-    bool AlphaBetaSwap(int f1, int f2);
+    bool AlphaBetaSwap(double f1, double f2);
 
     //cost functions
     double D(int i, int j, double dp);

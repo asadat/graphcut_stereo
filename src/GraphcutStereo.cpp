@@ -121,7 +121,7 @@ GraphcutStereo::GraphcutStereo(int argc, char **argv)
 
     std::string output_name = fname;
     output_name.erase(output_name.begin()+output_name.length()-4,output_name.begin()+output_name.length());
-    CVD::img_save(image[0],output_name+ "disparity.png");
+    //CVD::img_save(image[0],output_name+ "disparity.png");
 
     //display = new VideoDisplay(image[0].size());
     //display = new VideoDisplay(0,0,400,400);
@@ -161,21 +161,21 @@ void GraphcutStereo::Run()
 void GraphcutStereo::Update()
 {
     currentF++;
-    if(currentF >= (alpha_beta_swap?nF*nF/4:nF))
+    if(currentF >= (alpha_beta_swap?nF*nF:nF))
         currentF = 0;
 
     bool flag = drawHighRes;
     if(alpha_beta_swap)
-        drawHighRes = AlphaBetaSwap(currentF%(nF/2), currentF/(nF/2));
+        drawHighRes = AlphaBetaSwap(((double)(currentF%(nF)))*0.5, ((double)(currentF/(nF)))*0.5);
     else
         drawHighRes = AlphaExpansion(currentF);
 
     if(drawHighRes != flag)
     {
-        Display();
-
+       // Display();
         //DisparityMedian();
     }
+
 }
 
 void GraphcutStereo::glDraw()
@@ -433,12 +433,15 @@ void GraphcutStereo::DisparityMedian()
     //CVD::median_filter_3x3(tmp,disparity);
 }
 
-bool GraphcutStereo::AlphaBetaSwap(int f1, int f2)
+bool GraphcutStereo::AlphaBetaSwap(double f1, double f2)
 {
     static int round = 0;
     round++;
-    if(round > nF*nF)
-        return false;
+    if(round > nF*nF*4)
+    {
+        Display();
+        exit(0);
+    }
 
     ImageRef size = image[0].size();
 
@@ -476,10 +479,10 @@ bool GraphcutStereo::AlphaBetaSwap(int f1, int f2)
                 if(((int)newdisp[i][j]) != f1 && ((int)newdisp[i][j]) != f2)
                     continue;
 
-                bool brnode = (((int)newdisp[i][j+1]) == f1 || ((int)newdisp[i][j+1]) == f2);
-                bool bdnode =  (((int)newdisp[i+1][j]) == f1 || ((int)newdisp[i+1][j]) == f2);
-                bool bunode = (((int)newdisp[i-1][j]) == f1 || ((int)newdisp[i-1][j]) == f2);
-                bool blnode =  (((int)newdisp[i][j-1]) == f1 || ((int)newdisp[i][j-1]) == f2);
+                bool brnode = (fabs(newdisp[i][j+1]-f1) < 0.1 || fabs(newdisp[i][j+1]-f2) < 0.1);
+                bool bdnode = (fabs(newdisp[i+1][j]-f1) < 0.1 || fabs(newdisp[i+1][j]-f2) < 0.1);
+                bool bunode = (fabs(newdisp[i-1][j]-f1) < 0.1 || fabs(newdisp[i-1][j]-f2) < 0.1);
+                bool blnode = (fabs(newdisp[i][j-1]-f1) < 0.1 || fabs(newdisp[i][j-1]-f2) < 0.1);
 
                 GraphType::node_id nid = node_id_map[i][j];
                 if(nid == -1)
@@ -659,7 +662,10 @@ bool GraphcutStereo::AlphaExpansion(int f)
     static int round = 0;
     round++;
     if(round > nF+1)
-        return false;
+    {
+        Display();
+        exit(0);
+    }
 
     ImageRef size = image[0].size();
 
