@@ -1,11 +1,22 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2014.3.12)  15 APR 2014 14:12
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.6.30)  15 APR 2014 21:53
 entering extended mode
+ restricted \write18 enabled.
+ file:line:error style messages enabled.
  %&-line parsing enabled.
 **paper.tex
 (./paper.tex
-LaTeX2e <2009/09/24>
-Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
-yphenation, loaded.
+LaTeX2e <2011/06/27>
+Babel <v3.8m> and hyphenation patterns for english, dumylang, nohyphenation, ge
+rman-x-2012-05-30, ngerman-x-2012-05-30, afrikaans, ancientgreek, ibycus, arabi
+c, armenian, basque, bulgarian, catalan, pinyin, coptic, croatian, czech, danis
+h, dutch, ukenglish, usenglishmax, esperanto, estonian, ethiopic, farsi, finnis
+h, french, friulan, galician, german, ngerman, swissgerman, monogreek, greek, h
+ungarian, icelandic, assamese, bengali, gujarati, hindi, kannada, malayalam, ma
+rathi, oriya, panjabi, tamil, telugu, indonesian, interlingua, irish, italian, 
+kurmanji, latin, latvian, lithuanian, mongolian, mongolianlmc, bokmal, nynorsk,
+ polish, portuguese, romanian, romansh, russian, sanskrit, serbian, serbianc, s
+lovak, slovenian, spanish, swedish, turkish, turkmen, ukrainian, uppersorbian, 
+welsh, loaded.
 (./ieeeconf.cls
 
 LaTeX Warning: You have requested document class `ieeeconf',
@@ -19,7 +30,7 @@ Document Class: cssconf 2004/1/15 revision V1.6b by Pradeep Misra
 \@IEEEtrantmptoksA=\toks14
 LaTeX Font Info:    Try loading font information for OT1+ptm on input line 794.
 
-(/usr/share/texmf-texlive/tex/latex/psnfss/ot1ptm.fd
+(/usr/local/texlive/2012/texmf-dist/tex/latex/psnfss/ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
 \@IEEEnormalsizefontbaselineskip=\skip41
@@ -102,32 +113,39 @@ LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <24> not available
 \@IEEEtranrubishbin=\box26
 )
 ** ATTENTION: Overriding IEEE standard margins (line 12).
-(/usr/share/texmf-texlive/tex/latex/graphics/graphicx.sty
+(/usr/local/texlive/2012/texmf-dist/tex/latex/graphics/graphicx.sty
 Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
 
-(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty
+(/usr/local/texlive/2012/texmf-dist/tex/latex/graphics/keyval.sty
 Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
 \KV@toks@=\toks15
 )
-(/usr/share/texmf-texlive/tex/latex/graphics/graphics.sty
+(/usr/local/texlive/2012/texmf-dist/tex/latex/graphics/graphics.sty
 Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
 
-(/usr/share/texmf-texlive/tex/latex/graphics/trig.sty
+(/usr/local/texlive/2012/texmf-dist/tex/latex/graphics/trig.sty
 Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
 )
-(/etc/texmf/tex/latex/config/graphics.cfg
-File: graphics.cfg 2009/08/28 v1.8 graphics configuration of TeX Live
+(/usr/local/texlive/2012/texmf-dist/tex/latex/latexconfig/graphics.cfg
+File: graphics.cfg 2010/04/23 v1.9 graphics configuration of TeX Live
 )
 Package graphics Info: Driver file: pdftex.def on input line 91.
 
-(/usr/share/texmf-texlive/tex/latex/pdftex-def/pdftex.def
-File: pdftex.def 2010/03/12 v0.04p Graphics/color for pdfTeX
+(/usr/local/texlive/2012/texmf-dist/tex/latex/pdftex-def/pdftex.def
+File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
+
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2010/04/08 v1.3 Providing info/warning/error messages (HO)
+)
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
+Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
+)
 \Gread@gobject=\count91
 ))
 \Gin@req@height=\dimen113
 \Gin@req@width=\dimen114
 )
-(/usr/share/texmf-texlive/tex/latex/float/float.sty
+(/usr/local/texlive/2012/texmf-dist/tex/latex/float/float.sty
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \c@float@type=\count92
 \float@exts=\toks16
@@ -135,11 +153,11 @@ Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \@float@everytoks=\toks17
 \@floatcapt=\box28
 )
-(/usr/share/texmf-texlive/tex/latex/caption/caption.sty
-Package: caption 2009/10/09 v3.1k Customizing captions (AR)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/caption/caption.sty
+Package: caption 2012/02/19 v3.2f Customizing captions (AR)
 
-(/usr/share/texmf-texlive/tex/latex/caption/caption3.sty
-Package: caption3 2009/10/09 v3.1k caption3 kernel (AR)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2012/01/12 v1.4b caption3 kernel (AR)
 \captionmargin=\dimen115
 \captionmargin@=\dimen116
 \captionwidth=\dimen117
@@ -147,7 +165,7 @@ Package: caption3 2009/10/09 v3.1k caption3 kernel (AR)
 \caption@parindent=\dimen119
 \caption@hangindent=\dimen120
 Package caption Info: Unknown document class (or package),
-(caption)             standard defaults will be used on input line 1068.
+(caption)             standard defaults will be used.
 )
 
 Package caption Warning: Unsupported document class (or package) detected,
@@ -164,53 +182,352 @@ mpboxa \hbox {\footnotesize #1.~~ }\parbox [t]{\hsize }{\footnotesize \noindent
 xa \hfil }\fi \fi \fi .
 \c@ContinuedFloat=\count93
 Package caption Info: float package is loaded.
-) (/usr/share/texmf-texlive/tex/latex/caption/subcaption.sty
-Package: subcaption 2008/08/31 v1.0b Adding subcaptions (AR)
+) (/usr/local/texlive/2012/texmf-dist/tex/latex/caption/subcaption.sty
+Package: subcaption 2012/01/12 v1.1d Sub-captions (AR)
 \c@subfigure=\count94
 \c@subtable=\count95
 )
+(/usr/local/texlive/2012/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2000/07/18 v2.13 AMS math features
+\@mathmargin=\skip47
 
-! LaTeX Error: File `algorithm.sty' not found.
+For additional information on amsmath, use the `?' option.
+(/usr/local/texlive/2012/texmf-dist/tex/latex/amsmath/amstext.sty
+Package: amstext 2000/06/29 v2.01
 
-Type X to quit or <RETURN> to proceed,
-or enter new name. (Default extension: sty)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0
+\@emptytoks=\toks18
+\ex@=\dimen121
+))
+(/usr/local/texlive/2012/texmf-dist/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d
+\pmbraise@=\dimen122
+)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/amsmath/amsopn.sty
+Package: amsopn 1999/12/14 v2.01 operator names
+)
+\inf@bad=\count96
+LaTeX Info: Redefining \frac on input line 211.
+\uproot@=\count97
+\leftroot@=\count98
+LaTeX Info: Redefining \overline on input line 307.
+\classnum@=\count99
+\DOTSCASE@=\count100
+LaTeX Info: Redefining \ldots on input line 379.
+LaTeX Info: Redefining \dots on input line 382.
+LaTeX Info: Redefining \cdots on input line 467.
+\Mathstrutbox@=\box29
+\strutbox@=\box30
+\big@size=\dimen123
+LaTeX Font Info:    Redeclaring font encoding OML on input line 567.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
+\macc@depth=\count101
+\c@MaxMatrixCols=\count102
+\dotsspace@=\muskip10
+\c@parentequation=\count103
+\dspbrk@lvl=\count104
+\tag@help=\toks19
+\row@=\count105
+\column@=\count106
+\maxfields@=\count107
+\andhelp@=\toks20
+\eqnshift@=\dimen124
+\alignsep@=\dimen125
+\tagshift@=\dimen126
+\tagwidth@=\dimen127
+\totwidth@=\dimen128
+\lineht@=\dimen129
+\@envbody=\toks21
+\multlinegap=\skip48
+\multlinetaggap=\skip49
+\mathdisplay@stack=\toks22
+LaTeX Info: Redefining \[ on input line 2666.
+LaTeX Info: Redefining \] on input line 2667.
+)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/tools/enumerate.sty
+Package: enumerate 1999/03/05 v3.00 enumerate extensions (DPC)
+\@enLab=\toks23
+) (./paper.aux
 
-Enter file name: q
+LaTeX Warning: Label `fig:farm' multiply defined.
 
-! LaTeX Error: File `q.sty' not found.
 
-Type X to quit or <RETURN> to proceed,
-or enter new name. (Default extension: sty)
+LaTeX Warning: Label `fig:farm' multiply defined.
 
-Enter file name: 
-! Interruption.
-<to be read again> 
-                   }
-l.29 \usepackage
-                {multicol}^^M
-? q
-OK, entering \batchmode...
 
-! LaTeX Error: File `algpseudocode.sty' not found.
+LaTeX Warning: Label `sub@fig:farm' multiply defined.
 
-Type X to quit or <RETURN> to proceed,
-or enter new name. (Default extension: sty)
 
- Enter file name: 
-! Emergency stop.
-<read *> 
-         
-l.29 \usepackage
-                {multicol}^^M
-*** (cannot \read from terminal in nonstop modes)
+LaTeX Warning: Label `fig:farm' multiply defined.
 
- 
+
+LaTeX Warning: Label `sub@fig:farm' multiply defined.
+
+
+LaTeX Warning: Label `fig:farm' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:farm' multiply defined.
+
+
+LaTeX Warning: Label `fig:farm' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:farm' multiply defined.
+
+
+LaTeX Warning: Label `fig:trees' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:trees' multiply defined.
+
+
+LaTeX Warning: Label `fig:farm' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:farm' multiply defined.
+
+
+LaTeX Warning: Label `fig:farm' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:farm' multiply defined.
+
+
+LaTeX Warning: Label `fig:farm' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:farm' multiply defined.
+
+
+LaTeX Warning: Label `fig:farm' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:farm' multiply defined.
+
+
+LaTeX Warning: Label `fig:farm' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:farm' multiply defined.
+
+
+LaTeX Warning: Label `fig:realmaps' multiply defined.
+
+)
+\openout1 = `paper.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+ (/usr/local/texlive/2012/texmf-dist/tex/context/base/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count108
+\scratchdimen=\dimen130
+\scratchbox=\box31
+\nofMPsegments=\count109
+\nofMParguments=\count110
+\everyMPshowfont=\toks24
+\MPscratchCnt=\count111
+\MPscratchDim=\dimen131
+\MPnumerator=\count112
+\makeMPintoPDFobject=\count113
+\everyMPtoPDFconversion=\toks25
+) (/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
+Package: pdftexcmds 2011/11/29 v0.20 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/ifluatex.sty
+Package: ifluatex 2010/03/01 v1.3 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+)
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in PDF mode is detected.
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
+Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
+
+(/usr/local/texlive/2012/texmf-dist/tex/latex/oberdiek/grfext.sty
+Package: grfext 2010/08/19 v1.1 Manage graphics extensions (HO)
+
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/kvdefinekeys.sty
+Package: kvdefinekeys 2011/04/07 v1.3 Define keys (HO)
+))
+(/usr/local/texlive/2012/texmf-dist/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2011/06/30 v3.11 Key value format for package options (HO)
+
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/kvsetkeys.sty
+Package: kvsetkeys 2012/04/25 v1.16 Key value parser (HO)
+
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/etexcmds.sty
+Package: etexcmds 2011/02/16 v1.5 Avoid name clashes with e-TeX commands (HO)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+)))
+Package grfext Info: Graphics extension search list:
+(grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 452.
+
+(/usr/local/texlive/2012/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: End \AtBeginDocument code.
+
+<imgs/l4.png, id=1, 401.5pt x 320.19624pt>
+File: imgs/l4.png Graphic file (type png)
+ <use imgs/l4.png>
+Package pdftex.def Info: imgs/l4.png used on input line 62.
+(pdftex.def)             Requested size: 151.76854pt x 121.03578pt.
+
+<imgs/disp4.png, id=2, 401.5pt x 320.19624pt>
+File: imgs/disp4.png Graphic file (type png)
+ <use imgs/disp4.png>
+Package pdftex.def Info: imgs/disp4.png used on input line 70.
+(pdftex.def)             Requested size: 151.76854pt x 121.03578pt.
+
+<imgs/l4disparity-expansion.png, id=3, 401.5pt x 320.19624pt>
+File: imgs/l4disparity-expansion.png Graphic file (type png)
+
+<use imgs/l4disparity-expansion.png>
+Package pdftex.def Info: imgs/l4disparity-expansion.png used on input line 78.
+(pdftex.def)             Requested size: 151.76854pt x 121.03578pt.
+
+<imgs/l4disparity-swap.png, id=4, 401.5pt x 320.19624pt>
+File: imgs/l4disparity-swap.png Graphic file (type png)
+
+<use imgs/l4disparity-swap.png>
+Package pdftex.def Info: imgs/l4disparity-swap.png used on input line 86.
+(pdftex.def)             Requested size: 151.76854pt x 121.03578pt.
+
+<imgs/l4disparity-expansion-sub.png, id=5, 401.5pt x 320.19624pt>
+File: imgs/l4disparity-expansion-sub.png Graphic file (type png)
+
+<use imgs/l4disparity-expansion-sub.png>
+Package pdftex.def Info: imgs/l4disparity-expansion-sub.png used on input line 
+94.
+(pdftex.def)             Requested size: 151.76854pt x 121.03578pt.
+
+<imgs/l4disparity-swap-sub.png, id=6, 401.5pt x 320.19624pt>
+File: imgs/l4disparity-swap-sub.png Graphic file (type png)
+
+<use imgs/l4disparity-swap-sub.png>
+Package pdftex.def Info: imgs/l4disparity-swap-sub.png used on input line 102.
+(pdftex.def)             Requested size: 151.76854pt x 121.03578pt.
+ <imgs/l2.png, id=7, 401.5pt x 325.215pt>
+File: imgs/l2.png Graphic file (type png)
+
+<use imgs/l2.png>
+Package pdftex.def Info: imgs/l2.png used on input line 114.
+(pdftex.def)             Requested size: 151.76854pt x 122.9329pt.
+ <imgs/disp2.png, id=9, 401.5pt x 325.215pt>
+File: imgs/disp2.png Graphic file (type png)
+
+<use imgs/disp2.png>
+Package pdftex.def Info: imgs/disp2.png used on input line 122.
+(pdftex.def)             Requested size: 151.76854pt x 122.9329pt.
+
+<imgs/l2disparity-expansion.png, id=10, 401.5pt x 325.215pt>
+File: imgs/l2disparity-expansion.png Graphic file (type png)
+
+<use imgs/l2disparity-expansion.png>
+Package pdftex.def Info: imgs/l2disparity-expansion.png used on input line 130.
+
+(pdftex.def)             Requested size: 151.76854pt x 122.9329pt.
+
+<imgs/l2disparity-swap.png, id=11, 401.5pt x 325.215pt>
+File: imgs/l2disparity-swap.png Graphic file (type png)
+
+<use imgs/l2disparity-swap.png>
+Package pdftex.def Info: imgs/l2disparity-swap.png used on input line 138.
+(pdftex.def)             Requested size: 151.76854pt x 122.9329pt.
+
+<imgs/l2disparity-expansion-sub.png, id=12, 401.5pt x 325.215pt>
+File: imgs/l2disparity-expansion-sub.png Graphic file (type png)
+
+<use imgs/l2disparity-expansion-sub.png>
+Package pdftex.def Info: imgs/l2disparity-expansion-sub.png used on input line 
+146.
+(pdftex.def)             Requested size: 151.76854pt x 122.9329pt.
+
+<imgs/l2disparity-swap-sub.png, id=13, 401.5pt x 325.215pt>
+File: imgs/l2disparity-swap-sub.png Graphic file (type png)
+
+<use imgs/l2disparity-swap-sub.png>
+Package pdftex.def Info: imgs/l2disparity-swap-sub.png used on input line 154.
+(pdftex.def)             Requested size: 151.76854pt x 122.9329pt.
+
+<imgs/energy.png, id=14, 726.715pt x 122.4575pt>
+File: imgs/energy.png Graphic file (type png)
+ <use imgs/energy.png>
+Package pdftex.def Info: imgs/energy.png used on input line 173.
+(pdftex.def)             Requested size: 177.06458pt x 29.83698pt.
+
+(./paper.bbl)
+
+** Conference Paper **
+Before submitting the final camera ready copy, remember to:
+
+ 1. Manually equalize the lengths of two columns on the last page
+ of your paper;
+
+ 2. Ensure that any PostScript and/or PDF output post-processing
+ uses only Type 1 fonts and that every step in the generation
+ process uses the US letter (8.5in X 11in) paper size.
+
+[1{/usr/local/texlive/2012/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
+
+
+ <./imgs/energy.png>] [2 <./imgs/l4.png> <./imgs/disp4.png> <./imgs/l4disparity
+-expansion.png (PNG copy)> <./imgs/l4disparity-swap.png (PNG copy)> <./imgs/l4d
+isparity-expansion-sub.png (PNG copy)> <./imgs/l4disparity-swap-sub.png (PNG co
+py)> <./imgs/l2.png> <./imgs/disp2.png> <./imgs/l2disparity-expansion.png (PNG 
+copy)> <./imgs/l2disparity-swap.png (PNG copy)> <./imgs/l2disparity-expansion-s
+ub.png (PNG copy)> <./imgs/l2disparity-swap-sub.png (PNG copy)>] (./paper.aux)
+
+LaTeX Warning: There were multiply-defined labels.
+
+ ) 
 Here is how much of TeX's memory you used:
- 2181 strings out of 495061
- 35847 string characters out of 1182621
- 100584 words of memory out of 3000000
- 5410 multiletter control sequences out of 15000+50000
- 24710 words of font info for 54 fonts, out of 3000000 for 9000
- 28 hyphenation exceptions out of 8191
- 36i,0n,38p,253b,105s stack positions out of 5000i,500n,10000p,200000b,50000s
-!  ==> Fatal error occurred, no output PDF file produced!
+ 3868 strings out of 493488
+ 60932 string characters out of 3141326
+ 126102 words of memory out of 3000000
+ 7128 multiletter control sequences out of 15000+200000
+ 35718 words of font info for 72 fonts, out of 3000000 for 9000
+ 957 hyphenation exceptions out of 8191
+ 38i,8n,38p,941b,453s stack positions out of 5000i,500n,10000p,200000b,50000s
+{/usr/local/texlive/2012/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/t
+exlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/te
+xlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/local/texl
+ive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texliv
+e/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive
+/2012/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2012/texm
+f-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2012/texmf-dist/fon
+ts/type1/urw/times/utmri8a.pfb>
+Output written on paper.pdf (2 pages, 865771 bytes).
+PDF statistics:
+ 56 PDF objects out of 1000 (max. 8388607)
+ 29 compressed objects within 1 object stream
+ 0 named destinations out of 1000 (max. 500000)
+ 66 words of extra memory for PDF output out of 10000 (max. 10000000)
+

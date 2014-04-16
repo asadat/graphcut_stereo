@@ -159,9 +159,21 @@ sas21@sfu.ca% <-this % stops a space
         \label{fig:realmaps}
 \end{figure*}
 
-In this project we developed a stereo matching system based on graph-cut optimization framework \cite{boykov2001fast}. In stereo matching problem, 2 images taken from 2 cameras that are in the same hozirontal like The input to the system is a pare of images 
+In this project we developed a stereo matching system based on graph-cut optimization framework \cite{boykov2001fast}. In stereo matching problem, 2 images taken from 2 cameras that are on the same horizontal line are to be matched pixel by pixel. Therefore, for each pixel on the left image, we should find its corresponding pixel on the right image. According to the assumptions, we know that if $(i,j)$ is the coordinate of the pixel in the left image, the coordinate of the corresponding pixel in the right image will be $(i,j-d)$. The unknown variable $d$ is called disparity and is defined in the image space. Disparity is inversely proportional to the depth of the pixel, i.e., the higher the disparity the closer the object. The disparity is not always observable using only 2 images because part of the scene can be occluded in either of the left or right images and hence no matched pixel can be found.
+
+The stereo matching problem is formulated as: given a left and right image, find the most probable disparity image. This $maximum a posteriori$ problem is often solved by finding a disparity image that minimizes some energy function. The energy function includes some terms that promote data fidelity (data terms) as well as other terms that support prior assumptions about the solution, e.g., smoothness (smoothness term). These energy functions are non-convex and finding a global optimum it very difficult. Instead, approaches that result in approximation solutions are preferred. One way to reach a local optimum in the minimization is to perform gradient descent. Graph-cuts offer a framework that enables us to generate a movement (step) of current solution that is steepest in terms of minimizing the energy function. By generating and performing these steps iteratively, we reach a local optimum. 
+
+In section \ref{graphcut} we briefly explain how to generate gradient descent moves for a general pixel labelling problem.
 
 \section{Graphcut-based Optimization}
+\label{graphcut}
+The energy function that we use for stereo matching has the following form:
+\begin{figure}[h]
+                \centering
+                \includegraphics[width=0.35\textwidth]{imgs/energy.png}
+                \label{fig:farm}
+\end{figure}
+
 \section{Stereo Matching}
 \section{Experiments and Results}
 \bibliographystyle{ieeetr} 
