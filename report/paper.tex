@@ -52,6 +52,8 @@ sas21@sfu.ca% <-this % stops a space
 \pagestyle{empty}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\emph{Note: All the figures should be seen on screen in order to distinguish the gray level changes. Also for pixel coordinates $(i,j)$ means row $i$ and column $j$.}
+
 
 \section{INTRODUCTION}
 
@@ -101,7 +103,89 @@ In $\alpha-expansion$ move, a subset of the pixel that do not have label $\alpha
 The terminals are the labels $\alpha$ and $\overline{\alpha}$. Selecting $\overline{\alpha}$ simply means that the pixel will keep its current label. The middle nodes are all the pixels with labels other than $\alpha$. The weight of the terminal edges are the data terms $D_p(\alpha)$ or $D_p(f_p)$, i.e. the cost of assigning the terminal label to the pixel. Notice that $D_p(f_p)$ is used when $\overline{\alpha}$ is selected for pixel $p$ and $f_p$ is the current label of pixel $p$. The weight of the edges between middle nodes that with the same labels are the pairwise smoothness term $V_{p,q}(\alpha,f_p)$ in which $f_p$ is the current label of the pair pixels. If the labels of the two neighbour pixels are different we add another axillary node with edges to both corresponding neighbour nodes with weights $V(\alpha,f_p)$ and $V(f_p, \alpha)$ and an edge to the terminal $\overline{\alpha}$ with weight $V(f_q,f_p)$. Please see \cite{boykov2001fast} for details.
 
 \section{Stereo Matching}
+As mentioned earlier in stereo matching we want to find the most probable disparity image given the left and right input images. Therefore we minimize an energy function with data terms and smoothness terms involving the disparity labels. More specifically for data term we use the following:
+\begin{center}
+$D_{i,j}(f)$ $=$ $min\{|I(i,j)-I'(i,j-f)|,200\}$
+\end{center}
+where $I$ and $I'$ are the left and right image respectively and $f$ is the proposed disparity for pixel $(i,j)$. The constant (200) is to make sure that we are robust to noisy data and outliers. In addition to single pixel cost, we also use window based cost which is the mean of the above data term in a window of size $w$ centred around the corresponding pixel. We will discuss the results in section \ref{exper}.
+
+For the smoothness term we use 2 different models. The first one is the Potts model as follow:
+\begin{center}
+$V_{p,q}(f_p,f_q)$ $=$ $50*T(f_p \neq f_q)$
+\end{center}
+This means that if two neighbouring pixel are assigned different disparities, 50 units will be added to the energy function. This model tend to generate large segments with same disparity and is not appropriate for scenes that there is a gradient in depth. We show this in the experiments. For a better smoothness function which preserves linear depth changes we use the following smoothness term: 
+\begin{center}
+$V_{p,q}(f_p,f_q)$ $=$ $min\{5*|f_p - f_q|,50\}$
+\end{center}
+This smoothness term penalizes linearly as a function of the disparity difference. We need to cut off these penalties at some point to preserve the edges. We will discuss the results in the next section.
 \section{Experiments and Results}
+\label{exper}
+For the experiments we used the publicly available Middlebury stereo dataset\footnote{http://vision.middlebury.edu/stereo/data/}. Here, we only present the results for 2 different images "Art" in Fig. \ref{art} and "Wood1" in Fig. \ref{wood1}. These figures show the result for pixel level accuracy and subpixel accuracy. By subpixel accuracy we mean that the disparity could have 0.5 disparities. Therfore we can see that the gray level can be different very slightly from the results with pixel level accuracy because of finer resolution.
+
+Next we examine the effect of smoothness model in the energy function. The results are shown in Figure \ref{models}. It can be seen that the Potts model does not allow smooth changes in disparity and large areas with single disparity is preferred. On the other hand, with linear model, a number of disparity changes can be recognized which results in a little smoother disparity image.
+
+We also tested the effect of the size of the window that is used to aggregate the data term. Figure \ref{window} demonstrate the results for 3 different window sizes. We can see that as the window size grows, the changes in disparity becomes smoother. This window act like a low pass filter that removes the high frequencies in the disparity image.
+
+For implementation of this project we used the following libraries:
+\begin{itemize}
+\item Opencv\footnote{http://opencv.org}
+\item Min-cut library\footnote{http://vision.csd.uwo.ca/code/}
+\end{itemize}
+The source code of this project is also publicly available at: $https://github.com/asadat/graphcut\_stereo$.
+
+
+\begin{figure}
+        \centering
+        \begin{subfigure}[b]{0.3\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{imgs/l2disparity-expansion-potts.png}
+                \caption{The Potts model}
+                \label{fig:trees}
+        \end{subfigure}%
+        
+                 %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.3\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{imgs/l2disparity-expansion-linear.png}
+                \caption{Linear model}
+                \label{fig:farm}
+        \end{subfigure}
+        \caption{Disparity image for the "Wood1" dataset using $\alpha$-expansion with Potts and linear smoothness models.}
+        \label{models}
+\end{figure}
+
+\begin{figure}[t]
+        \centering
+        \begin{subfigure}[b]{0.3\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{imgs/l4disparity-expansion-w1.png}
+                \caption{$w=1$}
+                \label{fig:trees}
+        \end{subfigure}%
+        
+                 %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.3\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{imgs/l4disparity-expansion-w3.png}
+                \caption{$w=3$}
+                \label{fig:farm}
+        \end{subfigure}
+        
+                         %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.3\textwidth}
+                \centering
+                \includegraphics[width=\textwidth]{imgs/l4disparity-expansion-w5.png}
+                \caption{$w = 5$}
+                \label{fig:farm}
+        \end{subfigure}
+        \caption{Disparity image for the "Art" dataset using $\alpha$-expansion with 3 different window sizes for data term aggregation.}
+        \label{window}
+\end{figure}
+
+
 \begin{figure*}[t]
         \centering
         \begin{subfigure}[b]{0.3\textwidth}
@@ -151,7 +235,7 @@ The terminals are the labels $\alpha$ and $\overline{\alpha}$. Selecting $\overl
                 \label{fig:farm}
         \end{subfigure}
         \caption{Disparity image for the "Art" dataset using the both $\alpha\beta$-swap and $\alpha$-expansion with pixel and subpixel accuracies.}
-        \label{fig:realmaps}
+        \label{art}
 \end{figure*}
 
 \begin{figure*}[t]
@@ -203,7 +287,7 @@ The terminals are the labels $\alpha$ and $\overline{\alpha}$. Selecting $\overl
                 \label{fig:farm}
         \end{subfigure}
         \caption{Disparity image for the "Wood1" dataset using the both $\alpha\beta$-swap and $\alpha$-expansion with pixel and subpixel accuracies.}
-        \label{fig:realmaps}
+        \label{wood1}
 \end{figure*}
 
 

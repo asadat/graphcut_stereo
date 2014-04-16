@@ -287,8 +287,8 @@ double GraphcutStereo::D(int i, int j, double dp)
 
     double val=0;
     int w=1;
-    for(int ii=i-w; ii<=i+w;ii++)
-        for(int jj=j-w; jj<=j+w;jj++)
+    for(int ii=i-w; ii<i+w+1;ii++)
+        for(int jj=j-w; jj<j+w+1;jj++)
         {
             int pixVal = 0;
             int jj2 = jj-dp;
@@ -316,7 +316,7 @@ double GraphcutStereo::D(int i, int j, double dp)
             val+=pixVal;
         }
 
-    double n = 9;
+    double n = (2*w+1)*(2*w+1);
     val = (val/(n))<200?(val/(n)):200;
 
     return val*val;
@@ -382,7 +382,7 @@ double GraphcutStereo::V(int i1, int j1, double dp1, int i2, int j2, double dp2)
     }
     else
     {
-        val = 50*fabs(dp1-dp2); //alpha expansion
+        val = 5*fabs(dp1-dp2); //alpha expansion
         if(val >= 50)
         {
             val = 50;
