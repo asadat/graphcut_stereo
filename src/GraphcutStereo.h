@@ -58,7 +58,7 @@ private:
 
     bool alpha_beta_swap;
     bool subpixel;
-
+    bool potts;
     //subsamplings
     CVD::Image<float> disparity4x4;
     CVD::Image<CVD::Rgb<CVD::byte> > img0_4x4;

@@ -71,7 +71,7 @@ The energy function that we use for stereo matching has the following form:
                 \includegraphics[width=0.35\textwidth]{imgs/energy.png}
                 \label{fig:farm}
 \end{figure}
-
+\\ \\ \\ \\
 Here $D_p(f_p)$ is the data term, i.e. cost of assigning label $f_p$ to pixel $p$. This cost is calculated based on the input data (left and right images in stereo matching). The $V_{p,q}(f_p,f_q)$ term is the pairwise cost of two neighbours $p$, $q$ having labels $f_p$, $f_q$ respectively. 
 
 Assuming that we are at some arbitrary solution we generate an $\alpha\beta-swap$ move or $\alpha-expansion$ move. Next, if performing the new move reduces the energy function, we apply the move on the current solution and generate a new move again iteratively. 
@@ -128,7 +128,7 @@ We also tested the effect of the size of the window that is used to aggregate th
 
 For implementation of this project we used the following libraries:
 \begin{itemize}
-\item Opencv\footnote{http://opencv.org}
+\item LibCVD\footnote{http://www.edwardrosten.com/cvd/}
 \item Min-cut library\footnote{http://vision.csd.uwo.ca/code/}
 \end{itemize}
 The source code of this project is also publicly available at: $https://github.com/asadat/graphcut\_stereo$.

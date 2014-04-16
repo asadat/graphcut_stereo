@@ -13,6 +13,11 @@ GraphcutStereo::GraphcutStereo(int argc, char **argv)
     else
         alpha_beta_swap = false;
 
+    if(argc>4)
+        potts = (strcmp(argv[4],"-potts")==0?true:false);
+    else
+        potts = false;
+
     subpixel = false;
 
     drawHighRes = false;
@@ -227,6 +232,7 @@ void GraphcutStereo::glDraw()
 	    
 
             CVD::Rgb<CVD::byte> c = img0_4x4[i][j];
+            //CVD::Rgb<CVD::byte> c = img[0][i][j];
             glColor(c);
 //            float d = disparity4x4[i][j]; ;
 //            d = (d<=0)?1:d;
@@ -243,6 +249,12 @@ void GraphcutStereo::glDraw()
 
 void GraphcutStereo::Display()
 {
+    static bool saved = false;
+    if(saved)
+        return;
+    else
+        saved = true;
+
     Image<byte> disimg;
     disimg.resize(disparity.size());
 
@@ -258,6 +270,7 @@ void GraphcutStereo::Display()
 
     std::string output_name = fname;
     output_name.erase(output_name.begin()+output_name.length()-4,output_name.begin()+output_name.length());
+    output_name += (potts?"-potts-":"-linear-");
     if(alpha_beta_swap)
         CVD::img_save(disimg,output_name+ "disparity-swap.png");
     else
@@ -374,7 +387,7 @@ double GraphcutStereo::V(int i1, int j1, double dp1, int i2, int j2, double dp2)
     double val = 0;
     if(alpha_beta_swap)
     {
-        val = 100*fabs(dp1-dp2); //alpha beta swap
+        val = (potts?200:100)*fabs(dp1-dp2); //alpha beta swap
         if(val >= 100)
         {
             val = 100;
@@ -382,7 +395,7 @@ double GraphcutStereo::V(int i1, int j1, double dp1, int i2, int j2, double dp2)
     }
     else
     {
-        val = 5*fabs(dp1-dp2); //alpha expansion
+        val = (potts?100:5)*fabs(dp1-dp2); //alpha expansion
         if(val >= 50)
         {
             val = 50;
@@ -458,7 +471,8 @@ bool GraphcutStereo::AlphaBetaSwap(double f1, double f2)
     if(round > nF*nF*4)
     {
         Display();
-        exit(0);
+        //exit(0);
+        return true;
     }
 
     ImageRef size = image[0].size();
@@ -683,7 +697,8 @@ bool GraphcutStereo::AlphaExpansion(int f)
     if(round > nF+1)
     {
         Display();
-        exit(0);
+        //exit(0);
+        return true;
     }
 
     ImageRef size = image[0].size();
@@ -839,6 +854,7 @@ bool GraphcutStereo::AlphaExpansion(int f)
             lastE = newE;
             disparity.copy_from(newdisp);
             disparity4x4 = CVD::halfSample(disparity);
+            //disparity4x4.copy_from(newdisp);
         }
 
         //nodeidMap.clear();
